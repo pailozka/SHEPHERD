@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/shepherd/shepherd_data
+/shepherd/lightning_logs

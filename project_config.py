@@ -1,8 +1,8 @@
 from pathlib import Path
-
-
+import os
 #PROJECT_DIR = Path("/home/ema30/zaklab/rare_disease_dx/test_camera_ready") # Path('PATH/TO/SHEPHERD')
-PROJECT_DIR = Path("/n/data1/hms/dbmi/zaklab/mli/rare_disease_diagnosis/test_camera_ready/data/") # Path('PATH/TO/SHEPHERD')
+# cd shepherd (data folder should be in shepherd)
+PROJECT_DIR = Path(os.getcwd()) / "shepherd_data"  # Path('PATH/TO/SHEPHERD')
 CURR_KG = '8.9.21_kg' 
 KG_DIR = PROJECT_DIR / 'knowledge_graph' / CURR_KG
 PREDICT_RESULTS_DIR = PROJECT_DIR / 'results'
