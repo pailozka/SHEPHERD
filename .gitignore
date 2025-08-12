@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 /shepherd/shepherd_data
 /shepherd/lightning_logs
+/.idea

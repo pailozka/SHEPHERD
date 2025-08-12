@@ -15,7 +15,6 @@ import wandb
 import sys
 import umap
 from pathlib import Path
-
 # Our code
 from node_embedder_model import NodeEmbeder
 from task_heads.gp_aligner import GPAligner
@@ -48,7 +47,6 @@ class CombinedPatientNCA(pl.LightningModule):
     
         # NOTE: this will only work with GATv2Conv
         self.patient_model = PatientNCA(hparams, embed_dim=self.node_model.hparams.hp_dict['output']*self.node_model.hparams.hp_dict['n_heads'])
-
 
     def forward(self, batch):
         # Node Embedder
@@ -208,7 +206,7 @@ class CombinedPatientNCA(pl.LightningModule):
     def write_results_to_file(self, batch, softmax, correct_ranks, labels, phenotype_mask, disease_mask, attn_weights,  gat_attn, node_embeddings, phenotype_embeddings, disease_embeddings, save=True, loop_type='predict'):
         
         if save:
-            run_folder = Path(project_config.PROJECT_DIR) / 'checkpoints' / 'patient_NCA' / self.hparams.hparams['run_name'] / (Path(self.test_dataloader.dataloader.dataset.filepath).stem ) #.replce('/', '_')
+            run_folder = Path(project_config.PROJECT_DIR) / 'checkpoints' / 'patient_NCA' / self.hparams.hparams['run_name'] / ('disease_split_val_sim_patients_8.9.21_kg.txt') #.replce('/', '_') fix since test_dataloader does not exist
             run_folder.mkdir(parents=True, exist_ok=True)
             print('run_folder', run_folder)
         
