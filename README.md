@@ -178,7 +178,7 @@ python predict.py \
         --saved_node_embeddings_path checkpoints/<BEST_PRETRAIN_CHECKPOINT>.ckpt \
         --best_ckpt PATH/TO/BEST_MODEL_CHECKPOINT.ckpt 
 ```
-To generate predictions on your own dataset, please use `--patient_data my_data`. To generate predictions on simulated test patients, please use `--patient_data test_predict`. If using the provided checkpoint models, `checkpoints/<BEST_PRETRAIN_CHECKPOINT>.ckpt` should be `checkpoints/pretrain.ckpt` and `PATH/TO/BEST_MODEL_CHECKPOINT.ckpt` should be `checkpoints/causal_gene_discovery.ckpt`.
+To generate predictions on your own dataset, please use `--patient_data my_data`. To generate predictions on simulated test patients, please use `--patient_data disease_simulated`. If using the provided checkpoint models, `checkpoints/<BEST_PRETRAIN_CHECKPOINT>.ckpt` should be `checkpoints/pretrain.ckpt` and `PATH/TO/BEST_MODEL_CHECKPOINT.ckpt` should be `checkpoints/causal_gene_discovery.ckpt`.
 
 :sparkles: To run patients-like-me identification:
 
@@ -192,7 +192,7 @@ python predict.py \
         --saved_node_embeddings_path checkpoints/<BEST_PRETRAIN_CHECKPOINT>.ckpt \
         --best_ckpt PATH/TO/BEST_MODEL_CHECKPOINT.ckpt 
 ```
-To generate predictions on your own dataset, please use `--patient_data my_data`. To generate predictions on simulated test patients, please use `--patient_data test_predict`. If using the provided checkpoint models, `checkpoints/<BEST_PRETRAIN_CHECKPOINT>.ckpt` should be `checkpoints/pretrain.ckpt` and `PATH/TO/BEST_MODEL_CHECKPOINT.ckpt` should be `checkpoints/patients_like_me.ckpt`.
+To generate predictions on your own dataset, please use `--patient_data my_data`. To generate predictions on simulated test patients, please use `--patient_data disease_simulated`. If using the provided checkpoint models, `checkpoints/<BEST_PRETRAIN_CHECKPOINT>.ckpt` should be `checkpoints/pretrain.ckpt` and `PATH/TO/BEST_MODEL_CHECKPOINT.ckpt` should be `checkpoints/patients_like_me.ckpt`.
 
 :sparkles: To run novel disease characterization:
 
@@ -206,7 +206,7 @@ python predict.py \
         --saved_node_embeddings_path checkpoints/<BEST_PRETRAIN_CHECKPOINT>.ckpt \
         --best_ckpt PATH/TO/BEST_MODEL_CHECKPOINT.ckpt 
 ```
-To generate predictions on your own dataset, please use `--patient_data my_data`. To generate predictions on simulated test patients, please use `--patient_data test_predict`. If using the provided checkpoint models, `checkpoints/<BEST_PRETRAIN_CHECKPOINT>.ckpt` should be `checkpoints/pretrain.ckpt` and `PATH/TO/BEST_MODEL_CHECKPOINT.ckpt` should be `checkpoints/disease_characterization.ckpt`.
+To generate predictions on your own dataset, please use `--patient_data my_data`. To generate predictions on simulated test patients, please use `--patient_data disease_simulated`. If using the provided checkpoint models, `checkpoints/<BEST_PRETRAIN_CHECKPOINT>.ckpt` should be `checkpoints/pretrain.ckpt` and `PATH/TO/BEST_MODEL_CHECKPOINT.ckpt` should be `checkpoints/disease_characterization.ckpt`.
 
 To see and/or modify the default hyperparameters, please see the `get_predict_hparams()` function in `shepherd/hparams.py`.
 
