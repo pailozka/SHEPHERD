@@ -227,7 +227,11 @@ class NCALoss(BaseMetricLossFunction):
             loss_dict, disease_softmax, labels = self.nca_computation(
                 phenotype_embedding, candidate_disease_embeddings, labels, indices_tuple, use_one_hot_labels=True
             )
-
+        print("NCA loss_dict: ", loss_dict)
+        print("NCA softmax: ", disease_softmax)
+        print("NCA labels: ", labels)
+        print("NCA candidate_disease_idx: ", candidate_disease_idx)
+        print("NCA candidate_disease_embeddings: ", candidate_disease_embeddings)
         return loss_dict, disease_softmax, labels, candidate_disease_idx, candidate_disease_embeddings
 
     def nca_computation(
@@ -266,5 +270,3 @@ class NCALoss(BaseMetricLossFunction):
 
     def get_default_distance(self):
         return LpDistance(power=2)
-
-

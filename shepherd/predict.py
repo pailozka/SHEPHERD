@@ -83,7 +83,9 @@ def parse_args():
 
 @torch.no_grad()
 def predict(args):
-    
+    print("Starting")
+    t_total_0 = time.time()
+
     # Hyperparameters
     hparams = get_predict_hparams(args)
 
@@ -164,6 +166,8 @@ def predict(args):
         torch.save(disease_embeddings, str(output_base) + '_disease_embeddings.pth')
         print("Disease embeddings", disease_embeddings)
 
+    t_total_1 = time.time()
+    print(f"The prediction task took {t_total_1 - t_total_0:0.4f} seconds")
 
 if __name__ == "__main__":
     
