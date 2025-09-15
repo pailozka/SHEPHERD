@@ -136,6 +136,7 @@ def main():
     if not args.only_train_val_data:
         test_patients = read_patients(project_config.PROJECT_DIR / 'patients' / project_config.MY_TEST_DATA) 
         patients = patients + test_patients
+    print("PATIENTS: ", patients)
 
     # get filenames
     spl_matrix_fname = project_config.MY_DATA_DIR / f'{args.save_prefix}_agg={args.agg_type}_spl_matrix.npy'
@@ -143,6 +144,7 @@ def main():
 
     print(f'There are {len(patients)} patients in the dataset')
     patients_spl_matrix, spl_indexing = add_spl_info(patients, spl_matrix, hpo_to_idx_dict, ensembl_to_idx_dict, nid_to_spl_dict, min_spl, max_spl , all_gene_idx, args.agg_type, x_max)
+    print("Patients spl matrix", patients_spl_matrix)
     with open(str(project_config.PROJECT_DIR / 'patients' / spl_index_fname), 'wb') as handle:
         pickle.dump(spl_indexing, handle, protocol=pickle.HIGHEST_PROTOCOL)
     np.save(str(project_config.PROJECT_DIR / 'patients' / spl_matrix_fname), patients_spl_matrix)

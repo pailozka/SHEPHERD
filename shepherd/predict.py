@@ -31,6 +31,7 @@ import project_config
 from shepherd.dataset import PatientDataset
 from shepherd.samplers import PatientNeighborSampler
 
+import pandas as pd
 
 import preprocess
 from hparams import get_predict_hparams
@@ -108,9 +109,16 @@ def predict(args):
     print('Loaded SPL information')
     
     dataset = PatientDataset(project_config.PROJECT_DIR / 'patients' / hparams['test_data'], time=hparams['time'])
+    patient_ids = [str(p['id']) for p in dataset.patients]
+    print(patient_ids)
     print(f'There are {len(dataset)} patients in the test dataset')
     hparams.update({'inference_batch_size': len(dataset)})
     print('batch size: ', hparams['inference_batch_size'])
+    # Extract additional patient info for Parquet
+    phenotypes = [p.get('positive_phenotypes', []) for p in dataset.patients]  # List of HPO terms
+    candidate_genes = [p.get('all_candidate_genes', []) for p in dataset.patients]  # List of candidate genes
+    print(phenotypes)
+    print(candidate_genes)
     # Get dataloader
     nid_to_spl_dict = {nid: idx for idx, nid in enumerate(nodes[nodes["node_type"] == "gene/protein"]["node_idx"].tolist())}
 
@@ -129,7 +137,7 @@ def predict(args):
                     id="_".join(run_name.split(":")), resume="allow") 
 
     # Get patient model 
-    model = get_model(args, hparams, None, all_data, edge_attr_dict,  n_nodes,load_from_checkpoint=True)
+    model = get_model(args, hparams, None, all_data, edge_attr_dict, n_nodes, load_from_checkpoint=True)
 
     trainer = pl.Trainer(gpus=hparams['n_gpus'])
     
@@ -139,7 +147,10 @@ def predict(args):
     print(f"Predicting took {t2 - t1:0.4f} seconds", len(dataset), "patients")
 
     scores_dfs, attn_dfs, gat_attn_df_1, gat_attn_df_2, gat_attn_df_3, phenotype_embeddings, disease_embeddings = zip(*results)
-    
+    if type(phenotype_embeddings) == tuple:
+        phenotype_embeddings = phenotype_embeddings[0]
+
+    embeddings_np = phenotype_embeddings.cpu().numpy()
     print('---- RESULTS ----')
     if not os.path.exists(project_config.PROJECT_DIR / 'results'):
         os.mkdir(project_config.PROJECT_DIR / 'results')
@@ -160,11 +171,35 @@ def predict(args):
     torch.save(phenotype_embeddings, str(output_base) + '_phenotype_embeddings.pth')
     print("Phenotype embeddings", phenotype_embeddings)
 
+    # Build DataFrame
+    df_embeddings = pd.DataFrame({
+        "patient_id": patient_ids,
+        "phenotypes": phenotypes,  # Add HPO terms
+        "candidate_genes": candidate_genes,  # Add candidate genes
+        "embeddings": [emb.tolist() for emb in embeddings_np]
+    })
+
+    # Save as Parquet
+    parquet_path = str(output_base) + '_phenotype_embeddings.parquet'
+    df_embeddings.to_parquet(parquet_path, engine='pyarrow', index=False)
+    print(f"Saved phenotype embeddings with IDs to {parquet_path}")
+
     # Save disease embeddings
     if args.run_type == "disease_characterization":
         if type(disease_embeddings) == tuple: disease_embeddings = disease_embeddings[0]
         torch.save(disease_embeddings, str(output_base) + '_disease_embeddings.pth')
         print("Disease embeddings", disease_embeddings)
+        embeddings_np = disease_embeddings.cpu().numpy()
+        # Build DataFrame
+        df_embeddings = pd.DataFrame({
+            "patient_id": patient_ids,
+            "embeddings": [emb.tolist() for emb in embeddings_np]
+        })
+
+        # Save as Parquet
+        parquet_path = str(output_base) + '_disease_embeddings.parquet'
+        df_embeddings.to_parquet(parquet_path, engine='pyarrow', index=False)
+        print(f"Saved disease characterization embeddings with IDs to {parquet_path}")
 
     t_total_1 = time.time()
     print(f"The prediction task took {t_total_1 - t_total_0:0.4f} seconds")
