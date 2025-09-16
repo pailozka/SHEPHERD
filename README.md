@@ -88,6 +88,10 @@ We also provide checkpoints for SHEPHERD after pretraining and after training on
 
 You can run SHEPHERD on your own patient cohort by using our provided model checkpoints (i.e., no re-training needed). Please review this [README](https://github.com/mims-harvard/SHEPHERD/blob/main/Inference-README.md) to learn how to preprocess and run SHEPHERD on your own patient dataset.
 
+To generate spl betwen gene and phenotype:
+```bash
+python add_spl_to_patients.py --only_test_data --save_prefix combined
+```
 ### Pretrain on Rare Disease KG
 
 You can reproduce our pretraining results or pretrain SHEPHERD on your own knowledge graph:

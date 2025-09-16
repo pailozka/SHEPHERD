@@ -117,6 +117,7 @@ def predict(args):
     # Extract additional patient info for Parquet
     phenotypes = [p.get('positive_phenotypes', []) for p in dataset.patients]  # List of HPO terms
     candidate_genes = [p.get('all_candidate_genes', []) for p in dataset.patients]  # List of candidate genes
+    disease_name = [p.get('disease_name', 'Unknown') for p in dataset.patients]  # Disease name
     print(phenotypes)
     print(candidate_genes)
     # Get dataloader
@@ -174,6 +175,7 @@ def predict(args):
     # Build DataFrame
     df_embeddings = pd.DataFrame({
         "patient_id": patient_ids,
+        "disease_name": disease_name,
         "phenotypes": phenotypes,  # Add HPO terms
         "candidate_genes": candidate_genes,  # Add candidate genes
         "embeddings": [emb.tolist() for emb in embeddings_np]
@@ -193,6 +195,9 @@ def predict(args):
         # Build DataFrame
         df_embeddings = pd.DataFrame({
             "patient_id": patient_ids,
+            "disease_name": disease_name,
+            "phenotypes": phenotypes,  # Add HPO terms
+            "candidate_genes": candidate_genes,  # Add candidate genes
             "embeddings": [emb.tolist() for emb in embeddings_np]
         })
 
