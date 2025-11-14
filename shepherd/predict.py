@@ -106,7 +106,7 @@ def predict(args):
         with open(str(project_config.PROJECT_DIR / 'patients' / hparams['spl_index']), "rb") as input_file:
             spl_indexing_dict = pickle.load(input_file)
     else: spl_indexing_dict = None 
-    print('Loaded SPL information')
+    print('Loaded SPL information') 
     
     dataset = PatientDataset(project_config.PROJECT_DIR / 'patients' / hparams['test_data'], time=hparams['time'])
     patient_ids = [str(p['id']) for p in dataset.patients]
@@ -117,9 +117,23 @@ def predict(args):
     # Extract additional patient info for Parquet
     phenotypes = [p.get('positive_phenotypes', []) for p in dataset.patients]  # List of HPO terms
     candidate_genes = [p.get('all_candidate_genes', []) for p in dataset.patients]  # List of candidate genes
-    disease_name = [p.get('disease_name', 'Unknown') for p in dataset.patients]  # Disease name
+    # Handle disease_name or true_diseases (which may be list)
+    disease_name = []
+    for p in dataset.patients:
+        if "disease_name" in p and p["disease_name"]:
+            disease_name.append(p["disease_name"])
+        elif "true_diseases" in p and p["true_diseases"]:
+            # join list into a string
+            if isinstance(p["true_diseases"], list):
+                disease_name.append(";".join(map(str, p["true_diseases"])))
+            else:
+                disease_name.append(str(p["true_diseases"]))
+        else:
+            disease_name.append("Unknown")
+
     print(phenotypes)
     print(candidate_genes)
+    print(disease_name)
     # Get dataloader
     nid_to_spl_dict = {nid: idx for idx, nid in enumerate(nodes[nodes["node_type"] == "gene/protein"]["node_idx"].tolist())}
 
@@ -153,9 +167,9 @@ def predict(args):
 
     embeddings_np = phenotype_embeddings.cpu().numpy()
     print('---- RESULTS ----')
-    if not os.path.exists(project_config.PROJECT_DIR / 'results'):
-        os.mkdir(project_config.PROJECT_DIR / 'results')
-    output_base = project_config.PROJECT_DIR / 'results' /  (str(args.best_ckpt).replace('/', '.').split('.ckpt')[0])     
+    if not os.path.exists(project_config.PROJECT_DIR / 'results' / project_config.DATASET):
+        os.mkdir(project_config.PROJECT_DIR / 'results' / project_config.DATASET)
+    output_base = project_config.PROJECT_DIR / 'results' / project_config.DATASET /  (str(args.best_ckpt).replace('/', '.').split('.ckpt')[0])     
 
     # Save scores
     scores_df = pd.concat(scores_dfs).reset_index(drop=True)
